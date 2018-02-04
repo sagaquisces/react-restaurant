@@ -6,11 +6,13 @@ import SignOutButton from './SignOut'
 import * as routes from '../constants/routes'
 
 const Navigation = (props, { authUser }) =>
-  <div>
-    { authUser
-      ? <NavigationAuth />
-      : <NavigationNonAuth />
-    }
+  <div className="w3-top">
+    <div className="w3-row w3-padding w3-black">
+      { authUser
+        ? <NavigationAuth />
+        : <NavigationNonAuth />
+      }
+    </div>
   </div>
 
 Navigation.contextTypes = {
@@ -18,16 +20,26 @@ Navigation.contextTypes = {
 }
 
 const NavigationAuth = () =>
-  <ul>
-    <li><Link to={routes.HOME}>Home</Link></li>
-    <li><Link to={routes.ACCOUNT}>Account</Link></li>
-    <li><SignOutButton /></li>
-  </ul>
+  <div>
+    <div className='w3-col s3'>
+      <Link className='w3-button' to={routes.HOME}>Home</Link>
+    </div>
+    <div className='w3-col s3'>
+      <Link className='w3-button' to={routes.ACCOUNT}>Account</Link>
+    </div>
+    <div className='w3-col s3'>
+      <SignOutButton />
+    </div>
+  </div>
 
 const NavigationNonAuth = () =>
-  <ul>
-    <li><Link to={routes.HOME}>Home</Link></li>
-    <li><Link to={routes.SIGN_IN}>Sign In</Link></li>
-  </ul>
+  <div>
+    <div className='w3-col s3'>
+      <Link className='w3-button' to={routes.HOME}>Home</Link>
+    </div>
+    <div className='w3-col s3'>
+      <Link className='w3-button' to={routes.SIGN_IN}>Sign In</Link>
+    </div>
+  </div>
 
 export default Navigation

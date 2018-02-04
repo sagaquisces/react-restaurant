@@ -1,8 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import 'w3-css/w3.css'
 import './index.css';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import App from './components/App';
 
 ReactDOM.render(<App />, document.getElementById('root'));
-registerServiceWorker();
+
+if (module.hot) {
+  module.hot.accept()
+}

@@ -21,7 +21,7 @@ const data = {
     "Smooth",
     "Cold"
   ],
-  mode: 'textures'
+  mode: 'colors'
 };
 
 
