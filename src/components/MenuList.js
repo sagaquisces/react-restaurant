@@ -83,6 +83,8 @@ class MenuList extends Component {
   }
 
   render() {
+    const {authUser} = this.props
+    console.log(authUser)
     let mode = this.state.data.mode
     let myList = []
     if (mode === 'colors') {
@@ -90,18 +92,30 @@ class MenuList extends Component {
     } else {
       myList=this.state.data.textures
     }
-    const listItems = myList.map((item, i) =>
-      <li
-        data-id={i}
-        key={i}
-        draggable='true'
-        onDragEnd={this.dragEnd}
-        onDragOver={this.dragOver}
-        onDragStart={this.dragStart}
-      >
-        {item}
-      </li>
-    )
+    const listItems = myList.map((item, i) => {
+      if(authUser) {
+        return (
+          <li
+            data-id={i}
+            key={i}
+            draggable='true'
+            onDragEnd={this.dragEnd}
+            onDragOver={this.dragOver}
+            onDragStart={this.dragStart}
+          >
+            {item}
+          </li>
+        )
+      } return (
+        <li
+          data-id={i}
+          key={i}
+        >
+          {item}
+        </li>
+      )
+
+    })
     return (
       <ol>{listItems}</ol>
     )
