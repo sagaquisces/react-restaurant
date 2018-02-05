@@ -22,10 +22,13 @@ Navigation.contextTypes = {
 const NavigationAuth = () =>
   <div>
     <div className='w3-col s3'>
-      <Link className='w3-button' to={routes.HOME}>Home</Link>
+      <Link className='w3-button' to={routes.HOME}>HOME</Link>
     </div>
     <div className='w3-col s3'>
-      <Link className='w3-button' to={routes.ACCOUNT}>Account</Link>
+      <Link className='w3-button' to={routes.MENU}>MENU</Link>
+    </div>
+    <div className='w3-col s3'>
+      <Link className='w3-button' to={routes.ACCOUNT}>account</Link>
     </div>
     <div className='w3-col s3'>
       <SignOutButton />
@@ -35,10 +38,13 @@ const NavigationAuth = () =>
 const NavigationNonAuth = () =>
   <div>
     <div className='w3-col s3'>
-      <Link className='w3-button' to={routes.HOME}>Home</Link>
+      <Link className='w3-button' to={routes.HOME}>HOME</Link>
     </div>
     <div className='w3-col s3'>
-      <Link className='w3-button' to={routes.SIGN_IN}>Sign In</Link>
+      <Link className='w3-button' to={routes.MENU}>MENU</Link>
+    </div>
+    <div className='w3-col s3'>
+      <Link className='w3-button' to={routes.SIGN_IN}>sign in</Link>
     </div>
   </div>
 

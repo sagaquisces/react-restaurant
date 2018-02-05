@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom'
 
 import Navigation from './Navigation'
 import HomePage from './Home'
+import MenuPage from './Menu'
 import SignUpPage from './SignUp'
 import SignInPage from './SignIn'
 import PasswordForgetPage from './PasswordForget'
@@ -21,6 +22,10 @@ const App = () =>
       <Route
         exact path={routes.HOME}
         component={() => <HomePage />}
+      />
+      <Route
+        exact path={routes.MENU}
+        component={() => <MenuPage />}
       />
       <Route
         exact path={routes.SIGN_UP}

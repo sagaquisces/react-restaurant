@@ -1,8 +1,23 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-const AccountPage = () =>
+import Header from './Header'
+import { PasswordForgetForm } from './PasswordForget'
+import PasswordChangeForm from './PasswordChange'
+
+import withAuthorization from './withAuthorization'
+
+const AccountPage = (props, { authUser }) =>
   <div>
-    <h1>Account Page</h1>
+    <Header>ACCOUNT: {authUser.email}</Header>
+    <PasswordForgetForm />
+    <PasswordChangeForm />
   </div>
 
-export default AccountPage
+AccountPage.contextTypes = {
+  authUser: PropTypes.object,
+}
+
+const authCondition = (authUser) => !!authUser
+
+export default withAuthorization(authCondition)(AccountPage)

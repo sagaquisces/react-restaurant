@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
+import Header from './Header'
 
 import { auth } from '../firebase'
 
 const PasswordForgetPage = () =>
   <div>
-    <h1>Password Forget</h1>
+    <Header>OOPS...FORGOT MY PASSWORD</Header>
     <PasswordForgetForm />
   </div>
 
