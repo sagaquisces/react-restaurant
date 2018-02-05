@@ -76,6 +76,12 @@ class MenuList extends Component {
     this.sort(items, to)
   }
 
+  handleClick = (e, newMode) => {
+    let data = this.state.data
+    data.mode = newMode
+    this.setState({...data})
+  }
+
   render() {
     const {authUser} = this.props
     console.log(authUser)
@@ -89,7 +95,7 @@ class MenuList extends Component {
     const listItems = myList.map((item, i) => {
       if(authUser) {
         return (
-          <li
+          <div
             data-id={i}
             key={i}
             draggable='true'
@@ -98,27 +104,50 @@ class MenuList extends Component {
             onDragStart={this.dragStart}
           >
             <MenuListItem item={item}/>
-          </li>
+          </div>
         )
       } return (
-        <li
+        <div
           data-id={i}
           key={i}
         >
           <MenuListItem item={item}/>
-        </li>
+        </div>
       )
 
     })
     return (
-      <ul>{listItems}</ul>
+      <div>
+        <div className='w3-row w3-center w3-card w3-padding'>
+          <a
+            href='#'
+            onClick={(e) => this.handleClick(e, 'eat')}
+          >
+            <div className={mode==='eat' ? 'w3-col w3-dark-grey s6 tablink' : 'w3-col s6 tablink'}>
+              Eat
+            </div>
+          </a>
+          <a
+            href='#'
+            onClick={(e) => this.handleClick(e, 'drink')}
+          >
+            <div className={mode==='drink' ? 'w3-col w3-dark-grey s6 tablink' : 'w3-col s6 tablink'}>
+              Drink
+            </div>
+          </a>
+        </div>
+        <div class='w3-container w3-padding-48 w3-card'>
+          {listItems}
+        </div>
+      </div>
     )
   }
 }
 
 const MenuListItem = ({item}) =>
   <div>
-    {item.title}{' '}{item.desc}{' '}{item.price}
+    <h5>{item.title}</h5>
+    <p class='w3-text-grey'>{item.desc}{' '}{item.price}</p>
   </div>
 
 export default MenuList
