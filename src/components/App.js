@@ -9,6 +9,8 @@ import SignInPage from './SignIn'
 import PasswordForgetPage from './PasswordForget'
 import AccountPage from './Account'
 
+import './App.css'
+
 import * as routes from '../constants/routes'
 import withAuthentication from './withAuthentication'
 
