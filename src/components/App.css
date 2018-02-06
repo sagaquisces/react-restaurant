@@ -4,3 +4,12 @@
   background-image: url('https://images.pexels.com/photos/59782/pexels-photo-59782.jpeg?w=940&h=650&dpr=2&auto=compress&cs=tinysrgb');
   min-height: 75%;
 }
+
+input,textarea {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+input:focus, textarea:focus {
+  outline: none;
+}

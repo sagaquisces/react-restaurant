@@ -49,19 +49,22 @@ class PasswordForgetForm extends Component {
     const isInvalid = email === ''
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={this.state.email}
-          onChange={event => this.setState(byPropKey('email', event.target.value))}
-          type='email'
-          placeholder='Email Address'
-        />
-        <button disabled={isInvalid} type='submit'>
-          Reset My Password
-        </button>
+      <div className='w3-card w3-padding'>
+        <form className='w3-container' onSubmit={this.onSubmit}>
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={this.state.email}
+            onChange={event => this.setState(byPropKey('email', event.target.value))}
+            type='email'
+            placeholder='Email Address'
+          />
+          <button className="w3-btn w3-teal" disabled={isInvalid} type='submit'>
+            Reset My Password
+          </button>
 
-        { error && <p>{error.message}</p> }
-      </form>
+          { error && <p>{error.message}</p> }
+        </form>
+      </div>
     )
   }
 }

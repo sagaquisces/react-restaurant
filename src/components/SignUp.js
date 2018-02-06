@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
+import Header from './Header'
 import {
   Link,
   withRouter,
 } from 'react-router-dom'
 
-import { auth } from '../firebase'
+import { auth, db } from '../firebase'
 import * as routes from '../constants/routes'
 
 const SignUpPage = ({ history }) =>
-  <div>
-    <h1>SignUp</h1>
-    <SignUpForm history={history}/>
+<div className='w3-container'>
+  <div className='w3-content' style={{maxWidth: '700px'}}>
+      <Header>SignUp</Header>
+      <SignUpForm history={history}/>
+    </div>
   </div>
 
 const INITIAL_STATE = {
@@ -45,8 +48,14 @@ class SignUpForm extends Component {
 
     auth.doCreateUserWithEmailAndPassword(email, passwordOne)
       .then(authUser => {
-        this.setState(() => ({ ...INITIAL_STATE }))
-        history.push(routes.HOME)
+        db.doCreateUser(authUser.uid, username, email)
+          .then(() => {
+            this.setState(() => ({ ...INITIAL_STATE }))
+            history.push(routes.HOME)
+          })
+          .catch(error => {
+            this.setState(byPropKey('error', error))
+          })
       })
       .catch(error => {
         this.setState(byPropKey('error', error))
@@ -71,37 +80,43 @@ class SignUpForm extends Component {
       username === ''
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={username}
-          onChange={event => this.setState(byPropKey('username', event.target.value))}
-          type='text'
-          placeholder='Full Name'
-        />
-        <input
-          value={email}
-          onChange={event => this.setState(byPropKey('email', event.target.value))}
-          type='text'
-          placeholder='Email Address'
-        />
-        <input
-          value={passwordOne}
-          onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
-          type='password'
-          placeholder='Password'
-        />
-        <input
-          value={passwordTwo}
-          onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
-          type='password'
-          placeholder='Confirm Password'
-        />
-        <button disabled={isInvalid} type='submit'>
-          Sign Up
-        </button>
+      <div className='w3-card w3-padding'>
+        <form className='w3-container' onSubmit={this.onSubmit}>
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={username}
+            onChange={event => this.setState(byPropKey('username', event.target.value))}
+            type='text'
+            placeholder='Full Name'
+          />
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={email}
+            onChange={event => this.setState(byPropKey('email', event.target.value))}
+            type='text'
+            placeholder='Email Address'
+          />
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={passwordOne}
+            onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+            type='password'
+            placeholder='Password'
+          />
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={passwordTwo}
+            onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+            type='password'
+            placeholder='Confirm Password'
+          />
+          <button className ='w3-btn w3-teal' disabled={isInvalid} type='submit'>
+            Sign Up
+          </button>
 
-        { error && <p>{error.message}</p> }
-      </form>
+          { error && <p>{error.message}</p> }
+        </form>
+      </div>
     )
   }
 }

@@ -8,12 +8,13 @@ import PasswordChangeForm from './PasswordChange'
 import withAuthorization from './withAuthorization'
 
 const AccountPage = (props, { authUser }) =>
-  <div>
-    <Header>ACCOUNT: {authUser.email}</Header>
-    <PasswordForgetForm />
-    <PasswordChangeForm />
+  <div className='w3-container'>
+    <div className='w3-content' style={{maxWidth: '700px'}}>
+      <Header>ACCOUNT: {authUser.email}</Header>
+      <PasswordForgetForm />
+      <PasswordChangeForm />
+    </div>
   </div>
-
 AccountPage.contextTypes = {
   authUser: PropTypes.object,
 }

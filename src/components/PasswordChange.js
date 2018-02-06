@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import Header from './Header'
 
 import { auth } from '../firebase'
 
@@ -46,25 +45,29 @@ class PasswordChangeForm extends Component {
       passwordOne === ''
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={passwordOne}
-          onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
-          type='password'
-          placeholder='New Password'
-        />
-        <input
-          value={passwordTwo}
-          onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
-          type='password'
-          placeholder='Confirm New Password'
-        />
-        <button disabled={isInvalid} type='submit'>
-          Change My Password
-        </button>
+      <div className='w3-card w3-padding'>
+        <form className='w3-container' onSubmit={this.onSubmit}>
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={passwordOne}
+            onChange={event => this.setState(byPropKey('passwordOne', event.target.value))}
+            type='password'
+            placeholder='New Password'
+          />
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={passwordTwo}
+            onChange={event => this.setState(byPropKey('passwordTwo', event.target.value))}
+            type='password'
+            placeholder='Confirm New Password'
+          />
+          <button class="w3-btn w3-teal" disabled={isInvalid} type='submit'>
+            Change My Password
+          </button>
 
-        { error && <p>{error.message}</p> }
-      </form>
+          { error && <p>{error.message}</p> }
+        </form>
+      </div>
     )
   }
 }

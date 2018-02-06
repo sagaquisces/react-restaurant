@@ -16,11 +16,8 @@ import withAuthentication from './withAuthentication'
 
 const App = () =>
   <Router>
-    <div>
+    <div className='w3-large'>
       <Navigation />
-
-      <hr/>
-
       <Route
         exact path={routes.HOME}
         component={() => <HomePage />}

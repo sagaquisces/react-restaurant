@@ -1,17 +1,20 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router-dom'
 
+import Header from './Header'
 import { SignUpLink } from './SignUp'
 import { PasswordForgetLink } from './PasswordForget'
 import { auth } from '../firebase'
 import * as routes from '../constants/routes'
 
 const SignInPage = ({ history }) =>
-  <div>
-    <h1>Sign In</h1>
-    <SignInForm history={history} />
-    <PasswordForgetLink />
-    <SignUpLink />
+  <div className='w3-container'>
+    <div className='w3-content' style={{maxWidth: '700px'}}>
+      <Header>Sign In</Header>
+      <SignInForm history={history} />
+      <PasswordForgetLink />
+      <SignUpLink />
+    </div>
   </div>
 
 const byPropKey = (propertyName, value) => () => ({
@@ -65,25 +68,29 @@ class SignInForm extends Component {
       email === ''
 
     return (
-      <form onSubmit={this.onSubmit}>
-        <input
-          value={email}
-          onChange={event => this.setState(byPropKey('email', event.target.value))}
-          type='text'
-          placeholder='Email Address'
-        />
-        <input
-          value={password}
-          onChange={event => this.setState(byPropKey('password', event.target.value))}
-          type='password'
-          placeholder='Password'
-        />
-        <button disabled={isInvalid} type="submit">
-          Sign In
-        </button>
+      <div className='w3-card w3-padding'>
+        <form className='w3-container' onSubmit={this.onSubmit}>
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={email}
+            onChange={event => this.setState(byPropKey('email', event.target.value))}
+            type='text'
+            placeholder='Email Address'
+          />
+          <input
+            className='w3-input w3-border w3-hover-sand'
+            value={password}
+            onChange={event => this.setState(byPropKey('password', event.target.value))}
+            type='password'
+            placeholder='Password'
+          />
+          <button className='w3-btn w3-teal' disabled={isInvalid} type="submit">
+            Sign In
+          </button>
 
-        { error && <p>{error.message}</p> }
-      </form>
+          { error && <p>{error.message}</p> }
+        </form>
+      </div>
     )
   }
 }

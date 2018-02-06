@@ -1,19 +1,20 @@
 import React, { Component } from 'react'
+import NewMenuItemForm from './NewMenuItemForm'
 
 const data = {
   eat: [
-    {title: 'Bread Basket', desc: 'Assortment of fresh baked fruit breads and muffins', price: '5.50'},
-    {title: 'Honey Almond Granola with Fruits', desc: 'Natural cereal of honey toasted oats, raisins, almonds and dates', price: '7.00'},
-    {title: 'Belgian Waffle', desc: 'Vanilla flavored batter with malted flour', price: '7.50'},
-    {title: 'Scrambled eggs', desc: 'Scrambled eggs, roasted red pepper and garlic, with green onions', price: '7.50'},
-    {title: 'Blueberry Pancakes', desc: 'With syrup, butter and lots of berries', price: '8.50'},
+    {title: 'Bread Basket', desc: 'Assortment of fresh baked fruit breads and muffins', price: '5.50', objectID: 100},
+    {title: 'Honey Almond Granola with Fruits', desc: 'Natural cereal of honey toasted oats, raisins, almonds and dates', price: '7.00', objectID: 200},
+    {title: 'Belgian Waffle', desc: 'Vanilla flavored batter with malted flour', price: '7.50', objectID: 300},
+    {title: 'Scrambled eggs', desc: 'Scrambled eggs, roasted red pepper and garlic, with green onions', price: '7.50', objectID: 400},
+    {title: 'Blueberry Pancakes', desc: 'With syrup, butter and lots of berries', price: '8.50', objectID: 500},
   ],
   drink: [
-    {title: 'Coffee', desc: 'Regular coffee', price: '2.50'},
-    {title: 'Chocolato', desc: 'Chocolate espresso with milk', price: '4.50'},
-    {title: 'Corretto', desc: 'Whiskey and coffee', price: '5.00'},
-    {title: 'Iced tea', desc: 'Hot tea, except not hot', price: '3.00'},
-    {title: 'Soda', desc: 'Coke, Sprite, Fanta, etc.', price: '2.50'},
+    {title: 'Coffee', desc: 'Regular coffee', price: '2.50', objectID: 100},
+    {title: 'Chocolato', desc: 'Chocolate espresso with milk', price: '4.50', objectID: 200},
+    {title: 'Corretto', desc: 'Whiskey and coffee', price: '5.00', objectID: 300},
+    {title: 'Iced tea', desc: 'Hot tea, except not hot', price: '3.00', objectID: 400},
+    {title: 'Soda', desc: 'Coke, Sprite, Fanta, etc.', price: '2.50', objectID: 500},
   ],
   mode: 'drink'
 };
@@ -82,6 +83,36 @@ class MenuList extends Component {
     this.setState({...data})
   }
 
+  onDismiss = (i, mode) => {
+    let data = this.state.data
+    const isNotId = item => item.objectID !== i
+    if (mode==='eat') {
+      const newList = this.state.data.eat.filter(isNotId)
+      alert(newList)
+      data.eat = newList
+    } else {
+      const newList = this.state.data.drink.filter(isNotId)
+      alert(newList)
+      data.drink = newList
+    }
+    this.setState({...data})
+  }
+
+  handleAddingNewMenuItemToList = (newItem) => {
+    let data = this.state.data
+    let eat = data.eat.slice()
+    let drink = data.drink.slice()
+    let mode = newItem.mode
+    delete newItem.mode
+    console.log(newItem)
+    if(mode==='eat') {
+      data.eat.push(newItem)
+    } else {
+      data.drink.push(newItem)
+    }
+    this.setState({...data})
+  }
+
   render() {
     const {authUser} = this.props
     console.log(authUser)
@@ -98,11 +129,18 @@ class MenuList extends Component {
           <div
             data-id={i}
             key={i}
+            id={item.objectID}
             draggable='true'
             onDragEnd={this.dragEnd}
             onDragOver={this.dragOver}
             onDragStart={this.dragStart}
           >
+            <button
+              onClick={() => this.onDismiss(item.objectID, mode)}
+              type='button'
+            >
+              Dismiss
+            </button>
             <MenuListItem item={item}/>
           </div>
         )
@@ -118,6 +156,7 @@ class MenuList extends Component {
     })
     return (
       <div>
+        {authUser && <NewMenuItemForm onNewMenuItemCreation={this.handleAddingNewMenuItemToList}/>}
         <div className='w3-row w3-center w3-card w3-padding'>
           <a
             href='#'
@@ -136,7 +175,7 @@ class MenuList extends Component {
             </div>
           </a>
         </div>
-        <div class='w3-container w3-padding-48 w3-card'>
+        <div className='w3-container w3-padding-48 w3-card'>
           {listItems}
         </div>
       </div>
@@ -148,6 +187,7 @@ const MenuListItem = ({item}) =>
   <div>
     <h5>{item.title}</h5>
     <p class='w3-text-grey'>{item.desc}{' '}{item.price}</p>
+    <br />
   </div>
 
 export default MenuList
