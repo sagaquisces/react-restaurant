@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import NewMenuItemForm from './NewMenuItemForm'
+import { db } from '../firebase'
 
 const data = {
   eat: [
@@ -98,24 +99,25 @@ class MenuList extends Component {
     this.setState({...data})
   }
 
+  onSave = () => {
+    let data = Object.assign({}, this.state.data)
+    db.doCreateData(data.eat, data.drink, data.mode);
+  }
+
   handleAddingNewMenuItemToList = (newItem) => {
-    let data = this.state.data
-    let eat = data.eat.slice()
-    let drink = data.drink.slice()
+    let data = Object.assign({}, this.state.data)
     let mode = newItem.mode
     delete newItem.mode
-    console.log(newItem)
     if(mode==='eat') {
       data.eat.push(newItem)
     } else {
       data.drink.push(newItem)
     }
-    this.setState({...data})
+    this.setState(data)
   }
 
   render() {
     const {authUser} = this.props
-    console.log(authUser)
     let mode = this.state.data.mode
     let myList = []
     if (mode === 'eat') {
@@ -178,6 +180,11 @@ class MenuList extends Component {
         <div className='w3-container w3-padding-48 w3-card'>
           {listItems}
         </div>
+        <button
+          className="w3-btn w3-teal"
+          onClick={() => this.onSave()}
+          type='button'
+        >Save All</button>
       </div>
     )
   }
@@ -186,7 +193,7 @@ class MenuList extends Component {
 const MenuListItem = ({item}) =>
   <div>
     <h5>{item.title}</h5>
-    <p class='w3-text-grey'>{item.desc}{' '}{item.price}</p>
+    <p className='w3-text-grey'>{item.desc}{' '}{item.price}</p>
     <br />
   </div>
 

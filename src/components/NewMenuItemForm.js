@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { v4 } from 'uuid'
 
 const NewMenuItemForm = (props) => {
   let _title = null
@@ -9,7 +10,7 @@ const NewMenuItemForm = (props) => {
 
   function handleNewMenuItemFormSubmit(event) {
     event.preventDefault()
-    props.onNewMenuItemCreation({title: _title.value, desc: _desc.value, price: _price.value, mode: _mode.value})
+    props.onNewMenuItemCreation({title: _title.value, desc: _desc.value, price: _price.value, objectID: v4(), mode: _mode.value})
     _title.value = ''
     _desc.value = ''
     _price.value = ''
@@ -46,7 +47,7 @@ const NewMenuItemForm = (props) => {
           placeholder='eat or drink'
           ref={(input) => {_mode = input}}
         />
-        <button class="w3-btn w3-teal" type='submit'>Add</button>
+        <button className="w3-btn w3-teal" type='submit'>Add</button>
       </form>
     </div>
   )
