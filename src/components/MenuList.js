@@ -3,21 +3,9 @@ import NewMenuItemForm from './NewMenuItemForm'
 import { db } from '../firebase'
 
 const data = {
-  eat: [
-    {title: 'Bread Basket', desc: 'Assortment of fresh baked fruit breads and muffins', price: '5.50', objectID: 100},
-    {title: 'Honey Almond Granola with Fruits', desc: 'Natural cereal of honey toasted oats, raisins, almonds and dates', price: '7.00', objectID: 200},
-    {title: 'Belgian Waffle', desc: 'Vanilla flavored batter with malted flour', price: '7.50', objectID: 300},
-    {title: 'Scrambled eggs', desc: 'Scrambled eggs, roasted red pepper and garlic, with green onions', price: '7.50', objectID: 400},
-    {title: 'Blueberry Pancakes', desc: 'With syrup, butter and lots of berries', price: '8.50', objectID: 500},
-  ],
-  drink: [
-    {title: 'Coffee', desc: 'Regular coffee', price: '2.50', objectID: 100},
-    {title: 'Chocolato', desc: 'Chocolate espresso with milk', price: '4.50', objectID: 200},
-    {title: 'Corretto', desc: 'Whiskey and coffee', price: '5.00', objectID: 300},
-    {title: 'Iced tea', desc: 'Hot tea, except not hot', price: '3.00', objectID: 400},
-    {title: 'Soda', desc: 'Coke, Sprite, Fanta, etc.', price: '2.50', objectID: 500},
-  ],
-  mode: 'drink'
+  eat: [],
+  drink: [],
+  mode: 'eat'
 };
 
 
@@ -26,8 +14,23 @@ class MenuList extends Component {
     super(props)
 
     this.state = {
-      data: data
+      data: data,
+      isLoading: true,
     }
+  }
+
+  componentDidMount() {
+    db.onceGetData().then(snapshot => {
+      let state = Object.assign({},this.state)
+      let dataSnap = snapshot.val()
+      let eat = dataSnap.eat ? dataSnap.eat : false
+      let drink = dataSnap.drink ? dataSnap.drink : false
+      state.data.eat = eat ? dataSnap.eat : []
+      state.data.drink = drink ? dataSnap.drink : []
+
+      this.setState({data: state.data, isLoading: false,})
+    })
+
   }
 
   sort = (list, dragging) => {
@@ -79,9 +82,11 @@ class MenuList extends Component {
   }
 
   handleClick = (e, newMode) => {
-    let data = this.state.data
-    data.mode = newMode
-    this.setState({...data})
+    let state = this.state
+    console.log('handleClick')
+    console.log(state)
+    state.data.mode = newMode
+    this.setState({data: state.data})
   }
 
   onDismiss = (i, mode) => {
@@ -100,62 +105,75 @@ class MenuList extends Component {
   }
 
   onSave = () => {
+    console.log('onSave state: ' + this.state.data)
     let data = Object.assign({}, this.state.data)
     db.doCreateData(data.eat, data.drink, data.mode);
   }
 
-  handleAddingNewMenuItemToList = (newItem) => {
-    let data = Object.assign({}, this.state.data)
-    let mode = newItem.mode
-    delete newItem.mode
-    if(mode==='eat') {
-      data.eat.push(newItem)
+  handleAddingNewMenuItemToList = (newItem, category) => {
+    let state = Object.assign({}, this.state)
+    console.log('Here is a copy of state')
+    console.log(state)
+    console.log('Here is the newItem')
+    console.log(newItem)
+    console.log(category)
+    if(category==='eat') {
+      state.data.eat.push(newItem)
     } else {
-      data.drink.push(newItem)
+      state.data.drink.push(newItem)
     }
-    this.setState(data)
+    console.log('mutated data')
+    console.log(data)
+    this.setState({data: state.data})
+
   }
 
   render() {
     const {authUser} = this.props
-    let mode = this.state.data.mode
-    let myList = []
-    if (mode === 'eat') {
-      myList=this.state.data.eat
-    } else {
-      myList=this.state.data.drink
-    }
-    const listItems = myList.map((item, i) => {
-      if(authUser) {
-        return (
+    const {data, isLoading} = this.state
+    let listItems = 'There is nothing to show'
+
+    if (!isLoading && ((data.eat.length && (data.mode === 'eat')) || (data.drink.length && (data.mode === 'drink')))) {
+      let myList = []
+      if (data.mode === 'eat') {
+        myList=this.state.data.eat
+      } else {
+        myList=this.state.data.drink
+      }
+      listItems = myList.map((item, i) => {
+        if(authUser) {
+          return (
+            <div
+              data-id={i}
+              key={i}
+              id={item.objectID}
+              draggable='true'
+              onDragEnd={this.dragEnd}
+              onDragOver={this.dragOver}
+              onDragStart={this.dragStart}
+            >
+              <button
+                onClick={() => this.onDismiss(item.objectID, data.mode)}
+                type='button'
+              >
+                Dismiss
+              </button>
+              <MenuListItem item={item}/>
+            </div>
+          )
+        } return (
           <div
             data-id={i}
             key={i}
-            id={item.objectID}
-            draggable='true'
-            onDragEnd={this.dragEnd}
-            onDragOver={this.dragOver}
-            onDragStart={this.dragStart}
           >
-            <button
-              onClick={() => this.onDismiss(item.objectID, mode)}
-              type='button'
-            >
-              Dismiss
-            </button>
             <MenuListItem item={item}/>
           </div>
         )
-      } return (
-        <div
-          data-id={i}
-          key={i}
-        >
-          <MenuListItem item={item}/>
-        </div>
-      )
 
-    })
+      })
+
+    }
+
     return (
       <div>
         {authUser && <NewMenuItemForm onNewMenuItemCreation={this.handleAddingNewMenuItemToList}/>}
@@ -164,7 +182,7 @@ class MenuList extends Component {
             href='#'
             onClick={(e) => this.handleClick(e, 'eat')}
           >
-            <div className={mode==='eat' ? 'w3-col w3-dark-grey s6 tablink' : 'w3-col s6 tablink'}>
+            <div className={!isLoading && data && data.mode==='eat' ? 'w3-col w3-dark-grey s6 tablink' : 'w3-col s6 tablink'}>
               Eat
             </div>
           </a>
@@ -172,13 +190,13 @@ class MenuList extends Component {
             href='#'
             onClick={(e) => this.handleClick(e, 'drink')}
           >
-            <div className={mode==='drink' ? 'w3-col w3-dark-grey s6 tablink' : 'w3-col s6 tablink'}>
+            <div className={!isLoading && data && data.mode==='drink' ? 'w3-col w3-dark-grey s6 tablink' : 'w3-col s6 tablink'}>
               Drink
             </div>
           </a>
         </div>
         <div className='w3-container w3-padding-48 w3-card'>
-          {listItems}
+          {isLoading? <Loading /> : listItems}
         </div>
         <button
           className="w3-btn w3-teal"
@@ -194,7 +212,9 @@ const MenuListItem = ({item}) =>
   <div>
     <h5>{item.title}</h5>
     <p className='w3-text-grey'>{item.desc}{' '}{item.price}</p>
-    <br />
   </div>
+
+const Loading = () =>
+  <div>Loading ...</div>
 
 export default MenuList

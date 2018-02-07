@@ -6,15 +6,15 @@ const NewMenuItemForm = (props) => {
   let _title = null
   let _desc = null
   let _price = null
-  let _mode = null
+  let _category = null
 
   function handleNewMenuItemFormSubmit(event) {
     event.preventDefault()
-    props.onNewMenuItemCreation({title: _title.value, desc: _desc.value, price: _price.value, objectID: v4(), mode: _mode.value})
+    props.onNewMenuItemCreation({title: _title.value, desc: _desc.value, price: _price.value, objectID: v4(),}, _category.value)
     _title.value = ''
     _desc.value = ''
     _price.value = ''
-    _mode.value = ''
+    _category.value = ''
   }
 
   return (
@@ -43,9 +43,9 @@ const NewMenuItemForm = (props) => {
         <input
           className='w3-input w3-border w3-hover-sand'
           type='text'
-          id='mode'
+          id='category'
           placeholder='eat or drink'
-          ref={(input) => {_mode = input}}
+          ref={(input) => {_category = input}}
         />
         <button className="w3-btn w3-teal" type='submit'>Add</button>
       </form>

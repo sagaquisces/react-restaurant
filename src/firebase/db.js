@@ -17,3 +17,6 @@ export const doCreateData = (eat,drink,mode) =>
 
 export const onceGetUsers = () =>
   db.ref('users').once('value')
+
+export const onceGetData = () =>
+  db.ref('data').once('value')
