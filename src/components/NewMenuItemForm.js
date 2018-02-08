@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { v4 } from 'uuid'
 
-const NewMenuItemForm = (props) => {
+const NewMenuItemForm = ({mode, onNewMenuItemCreation}) => {
   let _title = null
   let _desc = null
   let _price = null
@@ -10,11 +10,10 @@ const NewMenuItemForm = (props) => {
 
   function handleNewMenuItemFormSubmit(event) {
     event.preventDefault()
-    props.onNewMenuItemCreation({title: _title.value, desc: _desc.value, price: _price.value, objectID: v4(),}, _category.value)
+    onNewMenuItemCreation({title: _title.value, desc: _desc.value, price: _price.value, objectID: v4(),}, _category.value)
     _title.value = ''
     _desc.value = ''
     _price.value = ''
-    _category.value = ''
   }
 
   return (
@@ -40,13 +39,17 @@ const NewMenuItemForm = (props) => {
           placeholder='Price (ex., 5.50)'
           ref={(input) => {_price = input}}
         />
-        <input
-          className='w3-input w3-border w3-hover-sand'
-          type='text'
-          id='category'
-          placeholder='eat or drink'
+        <select
+          className="w3-select"
+          name="option"
           ref={(input) => {_category = input}}
-        />
+        >
+          <option value={mode} selected>Choose your menu category</option>
+          <option value="eat">Eat</option>
+          <option value="drink">Drink</option>
+
+        </select>
+
         <button className="w3-btn w3-teal" type='submit'>Add</button>
       </form>
     </div>

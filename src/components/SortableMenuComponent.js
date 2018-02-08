@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 import NewMenuItemForm from './NewMenuItemForm'
 import { db } from '../firebase'
 
+import {SortableContainer, SortableElement, SortableHandle, arrayMove} from 'react-sortable-hoc';
+
 const data = {
   eat: [],
   drink: [],
@@ -9,7 +11,57 @@ const data = {
 };
 
 
-class MenuList extends Component {
+const SortableMenuListItem = SortableElement(({value, authUser, onDismiss}) => {
+
+  let item = <div>
+    <h5>{value.title}</h5>
+    <p className='w3-text-grey'>{value.desc}{' '}{value.price}</p>
+  </div>
+  if(authUser) {
+    return (
+      <div>
+        <button
+          onClick={() => onDismiss(value.objectID, data.mode)}
+          type='button'
+        >
+          Dismiss
+        </button>
+        <div>
+          {item}
+        </div>
+      </div>
+    )
+  }
+  return (
+    <div>
+      {item}
+    </div>
+  )
+})
+
+const SortableMenuList = SortableContainer(({items, authUser, onDismiss}) => {
+  if(authUser) {
+    return (
+      <div>
+        {items.map((value, index) => (
+
+          <SortableMenuListItem key={`item-${index}`} index={index} value={value} onDismiss={onDismiss} authUser={authUser}/>
+
+        ))}
+      </div>
+    )
+  }
+  return (
+    <div>
+      {items.map((value, index) => (
+        <SortableMenuListItem disabled key={`item-${index}`} index={index} value={value} authUser={authUser}/>
+      ))}
+    </div>
+  )
+})
+
+
+class SortableMenuComponent extends Component {
   constructor(props) {
     super(props)
 
@@ -30,55 +82,6 @@ class MenuList extends Component {
 
       this.setState({data: state.data, isLoading: false,})
     })
-
-  }
-
-  sort = (list, dragging) => {
-    let data = this.state.data
-    let mode = this.state.data.mode
-    if(mode==='eat') {
-      data.eat = list
-    } else {
-      data.drink = list
-    }
-    data.dragging = dragging
-    this.setState({...data})
-  }
-
-  dragEnd = () => {
-    let mode = this.state.data.mode
-    if(mode==='eat') {
-      this.sort(this.state.data.eat, undefined)
-    } else {
-      this.sort(this.state.data.drink, undefined)
-    }
-  }
-
-  dragStart = (e) => {
-    this.dragged = Number(e.currentTarget.dataset.id)
-    e.dataTransfer.effectAllowed = 'move'
-    e.dataTransfer.setData('text/html', null)
-  }
-
-  dragOver = (e) => {
-    e.preventDefault()
-    let mode = this.state.data.mode
-    let over = e.currentTarget
-    let dragging = this.state.data.dragging
-    let from = isFinite(dragging) ? dragging : this.dragged
-    let to = Number(over.dataset.id)
-    if((e.clientY - over.offsetTop) > (over.offsetHeight /2)) to++
-    if(from < to) to--
-
-    // Move from 'a' to 'b'
-    let items = []
-    if(mode==='eat') {
-      items=this.state.data.eat
-    } else {
-      items=this.state.data.drink
-    }
-    items.splice(to, 0, items.splice(from,1)[0])
-    this.sort(items, to)
   }
 
   handleClick = (e, newMode) => {
@@ -104,10 +107,17 @@ class MenuList extends Component {
     this.setState({...data})
   }
 
-  onSave = () => {
-    console.log('onSave state: ' + this.state.data)
-    let data = Object.assign({}, this.state.data)
-    db.doCreateData(data.eat, data.drink, data.mode);
+  onSortEnd = ({oldIndex, newIndex}) => {
+    let prevData = this.state.data
+    let mode = this.state.data.mode
+    if(mode==='eat') {
+      prevData.eat = arrayMove(data.eat, oldIndex, newIndex)
+    } else {
+      prevData.drink = arrayMove(data.drink, oldIndex, newIndex)
+    }
+    this.setState({
+      data: data
+    });
   }
 
   handleAddingNewMenuItemToList = (newItem, category) => {
@@ -129,8 +139,10 @@ class MenuList extends Component {
   }
 
   render() {
-    const {authUser} = this.props
+    console.log(this.state.data)
     const {data, isLoading} = this.state
+    const {authUser} = this.props
+
     let listItems = 'There is nothing to show'
 
     if (!isLoading && ((data.eat.length && (data.mode === 'eat')) || (data.drink.length && (data.mode === 'drink')))) {
@@ -140,43 +152,12 @@ class MenuList extends Component {
       } else {
         myList=this.state.data.drink
       }
-      listItems = myList.map((item, i) => {
-        if(authUser) {
-          return (
-            <div
-              data-id={i}
-              key={i}
-              id={item.objectID}
-              draggable='true'
-              onDragEnd={this.dragEnd}
-              onDragOver={this.dragOver}
-              onDragStart={this.dragStart}
-            >
-              <button
-                onClick={() => this.onDismiss(item.objectID, data.mode)}
-                type='button'
-              >
-                Dismiss
-              </button>
-              <MenuListItem item={item}/>
-            </div>
-          )
-        } return (
-          <div
-            data-id={i}
-            key={i}
-          >
-            <MenuListItem item={item}/>
-          </div>
-        )
-
-      })
-
+      listItems = <SortableMenuList items={myList} onSortEnd={this.onSortEnd} onDismiss={this.onDismiss} authUser={authUser}/>
     }
 
     return (
       <div>
-        {authUser && <NewMenuItemForm onNewMenuItemCreation={this.handleAddingNewMenuItemToList}/>}
+        {authUser && <NewMenuItemForm mode={this.state.data.mode} onNewMenuItemCreation={this.handleAddingNewMenuItemToList}/>}
         <div className='w3-row w3-center w3-card w3-padding'>
           <a
             href='#'
@@ -198,23 +179,14 @@ class MenuList extends Component {
         <div className='w3-container w3-padding-48 w3-card'>
           {isLoading? <Loading /> : listItems}
         </div>
-        <button
-          className="w3-btn w3-teal"
-          onClick={() => this.onSave()}
-          type='button'
-        >Save All</button>
+
       </div>
     )
   }
 }
 
-const MenuListItem = ({item}) =>
-  <div>
-    <h5>{item.title}</h5>
-    <p className='w3-text-grey'>{item.desc}{' '}{item.price}</p>
-  </div>
 
 const Loading = () =>
   <div>Loading ...</div>
 
-export default MenuList
+export default SortableMenuComponent
