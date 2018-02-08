@@ -107,6 +107,12 @@ class SortableMenuComponent extends Component {
     this.setState({...data})
   }
 
+  onSave = () => {
+    console.log('onSave state: ' + this.state.data)
+    let data = Object.assign({}, this.state.data)
+    db.doCreateData(data.eat, data.drink, data.mode);
+  }
+
   onSortEnd = ({oldIndex, newIndex}) => {
     let prevData = this.state.data
     let mode = this.state.data.mode
@@ -179,7 +185,11 @@ class SortableMenuComponent extends Component {
         <div className='w3-container w3-padding-48 w3-card'>
           {isLoading? <Loading /> : listItems}
         </div>
-
+        <button
+          className="w3-btn w3-teal"
+          onClick={() => this.onSave()}
+          type='button'
+        >Save All</button>
       </div>
     )
   }
