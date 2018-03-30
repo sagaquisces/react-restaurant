@@ -21,10 +21,11 @@ const SortableMenuListItem = SortableElement(({value, authUser, onDismiss}) => {
     return (
       <div>
         <button
+          className="w3-btn w3-red w3-small"
           onClick={() => onDismiss(value.objectID, data.mode)}
           type='button'
         >
-          Dismiss
+          DELETE
         </button>
         <div>
           {item}
@@ -185,11 +186,14 @@ class SortableMenuComponent extends Component {
         <div className='w3-container w3-padding-48 w3-card'>
           {isLoading? <Loading /> : listItems}
         </div>
-        <button
-          className="w3-btn w3-teal"
-          onClick={() => this.onSave()}
-          type='button'
-        >Save All</button>
+        { authUser &&
+          <button
+            className="w3-btn w3-teal"
+            onClick={() => this.onSave()}
+            type='button'
+          >Save All</button>
+        }
+
       </div>
     )
   }

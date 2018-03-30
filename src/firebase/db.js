@@ -9,11 +9,13 @@ export const doCreateUser = (id, username, email) =>
   })
 
 export const doCreateData = (eat,drink,mode) =>
-  db.ref(`data/`).set({
-    eat,
-    drink,
-    mode,
-  })
+  db.ref(`data/`)
+    .set({
+      eat,
+      drink,
+      mode,
+    })
+    .then(alert('You successfully saved your changes.'))
 
 export const onceGetUsers = () =>
   db.ref('users').once('value')

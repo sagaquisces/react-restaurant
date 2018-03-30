@@ -8,6 +8,7 @@ import SignUpPage from './SignUp'
 import SignInPage from './SignIn'
 import PasswordForgetPage from './PasswordForget'
 import AccountPage from './Account'
+import Footer from './Footer'
 
 import './App.css'
 
@@ -42,6 +43,7 @@ const App = () =>
         exact path={routes.ACCOUNT}
         component={() => <AccountPage />}
       />
+      <Footer />
     </div>
   </Router>
 
